@@ -25,7 +25,7 @@ Route::prefix('v1')->as('v1:')->group(static function (): void {
         Route::get('', 'index');
         Route::get('{id}', 'show');
         Route::post('', 'store');
-        Route::put('', 'update');
-        Route::delete('', 'destroy');
+        Route::put('{id}', 'update');
+        Route::delete('{id}', 'destroy');
     });
 });

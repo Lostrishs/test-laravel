@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Article;
+use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ArticlesService
 {
@@ -19,10 +21,17 @@ class ArticlesService
     /**
      * @param int $id
      * @return Article|null
+     * @throws Exception
      */
     public function getArticleById(int $id): ?Article
     {
-        return Article::find($id);
+        $article = Article::find($id);
+
+        if (!$article) {
+            $this->throwNotFoundException();
+        }
+
+        return $article;
     }
 
     /**
@@ -35,23 +44,49 @@ class ArticlesService
     }
 
     /**
-     * @param Article $article
+     * @param int $id
      * @param array $articleData
      * @return Article|null
+     * @throws Exception
      */
-    public function updateArticle(Article $article, array $articleData): ?Article
+    public function updateArticle(int $id, array $articleData): ?Article
     {
+        $article = Article::find($id);
+
+        if (!$article) {
+            $this->throwNotFoundException();
+        }
+
         $article->update($articleData);
 
         return $article;
     }
 
     /**
-     * @param Article $article
+     * @param int $id
      * @return bool
+     * @throws Exception
      */
-    public function deleteArticle(Article $article): bool
+    public function deleteArticle(int $id): bool
     {
+        $article = Article::find($id);
+
+        if (!$article) {
+            $this->throwNotFoundException();
+        }
+
         return $article->delete();
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    private function throwNotFoundException(): void
+    {
+        throw new Exception(
+            ResponseAlias::$statusTexts[ResponseAlias::HTTP_NOT_FOUND],
+            ResponseAlias::HTTP_NOT_FOUND
+        );
     }
 }

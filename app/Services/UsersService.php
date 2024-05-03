@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UsersService
 {
@@ -19,9 +21,28 @@ class UsersService
     /**
      * @param int $id
      * @return User|null
+     * @throws Exception
      */
     public function getUserById(int $id): ?User
     {
-        return User::find($id);
+        $user = User::find($id);
+
+        if (!$user) {
+            $this->throwNotFoundException();
+        }
+
+        return $user;
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
+    private function throwNotFoundException(): void
+    {
+        throw new Exception(
+            ResponseAlias::$statusTexts[ResponseAlias::HTTP_NOT_FOUND],
+            ResponseAlias::HTTP_NOT_FOUND
+        );
     }
 }

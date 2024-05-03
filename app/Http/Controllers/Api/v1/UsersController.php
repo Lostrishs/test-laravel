@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use App\Services\UsersService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class UsersController extends Controller
 {
@@ -41,13 +41,12 @@ class UsersController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $user = $this->usersService->getUserById($id);
+        try {
+            $user = $this->usersService->getUserById($id);
 
-        return $user ?
-            response()->json($user) :
-            response()->json(
-                ResponseAlias::$statusTexts[ResponseAlias::HTTP_NOT_FOUND],
-                ResponseAlias::HTTP_NOT_FOUND
-            );
+            return response()->json($user);
+        } catch (Exception $exception) {
+            return response()->json($exception->getMessage(), $exception->getCode());
+        }
     }
 }
