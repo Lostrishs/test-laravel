@@ -1,0 +1,19 @@
+<project name="test-project" default="build" basedir="./">
+    <target name="composer" unless="composer.done">
+        <exec executable="php">
+            <arg line="-d memory_limit=-1"/>
+            <arg line="composer.phar install"/>
+        </exec>
+
+        <property name="composer.done" value="true"/>
+    </target>
+
+    <target name="migrate" unless="migrate.done">
+        <exec executable="php artisan migrate" />
+
+        <property name="migrate.done" value="true" />
+    </target>
+
+    <target name="build" depends=""/>
+    <target name="deploy" depends="composer, migrate"/>
+</project>

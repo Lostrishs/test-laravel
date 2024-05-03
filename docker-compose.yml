@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+    app_test_db:
+        container_name: app_test_db
+        image: mysql:8.4.0
+        volumes:
+            - mysql:/var/lib/mysql
+        ports:
+            - '33061:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: test_db
+            MYSQL_USER: laravel_user
+            MYSQL_PASSWORD: laravel_password
+
+    app_test_be:
+        container_name: app_test_be
+        build:
+            context: .
+        working_dir: /var/www/html
+        env_file:
+            - .env
+        volumes:
+            - ./:/var/www/html
+        depends_on:
+            - 'app_test_db'
+        ports:
+            - '80:80'
+
+volumes:
+    mysql:
