@@ -9,9 +9,19 @@
     </target>
 
     <target name="migrate" unless="migrate.done">
-        <exec executable="php artisan migrate" />
+        <exec executable="php">
+            <arg line="artisan migrate"/>
+        </exec>
 
         <property name="migrate.done" value="true" />
+    </target>
+
+    <target name="serve" unless="serve.done">
+        <exec executable="php">
+            <arg line="artisan serve"/>
+        </exec>
+
+        <property name="serve.done" value="true" />
     </target>
 
     <target name="build" depends=""/>
