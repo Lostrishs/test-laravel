@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Article;
 use App\Services\ArticlesService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ArticlesController extends Controller
 {
@@ -42,14 +41,13 @@ class ArticlesController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $article = $this->articlesService->getArticleById($id);
+        try {
+            $article = $this->articlesService->getArticleById($id);
 
-        return $article ?
-            response()->json($article) :
-            response()->json(
-                ResponseAlias::$statusTexts[ResponseAlias::HTTP_NOT_FOUND],
-                ResponseAlias::HTTP_NOT_FOUND
-            );
+            return response()->json($article);
+        } catch (Exception $exception) {
+            return response()->json($exception->getMessage(), $exception->getCode());
+        }
     }
 
     /**
@@ -71,28 +69,36 @@ class ArticlesController extends Controller
     /**
      * Update the specified resource.
      *
+     * @param int $id
      * @param Request $request
-     * @param Article $article
      * @return JsonResponse
      */
-    public function update(Request $request, Article $article): JsonResponse
+    public function update(int $id, Request $request): JsonResponse
     {
         $request->validate([
             'title' => 'required',
             'text' => 'required',
         ]);
 
-        return response()->json($this->articlesService->updateArticle($article, $request->all()));
+        try {
+            return response()->json($this->articlesService->updateArticle($id, $request->all()));
+        } catch (Exception $exception) {
+            return response()->json($exception->getMessage(), $exception->getCode());
+        }
     }
 
     /**
      * Delete the specified resource.
      *
-     * @param Article $article
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Article $article): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        return response()->json($this->articlesService->deleteArticle($article));
+        try {
+            return response()->json($this->articlesService->deleteArticle($id));
+        } catch (Exception $exception) {
+            return response()->json($exception->getMessage(), $exception->getCode());
+        }
     }
 }
