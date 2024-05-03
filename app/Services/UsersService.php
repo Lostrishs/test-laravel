@@ -13,7 +13,7 @@ class UsersService
      */
     public function getUsers(int $perPage): ?LengthAwarePaginator
     {
-        return User::orderByDesc('id')->paginate($perPage);
+        return User::with('articles')->orderByDesc('id')->paginate($perPage);
     }
 
     /**
