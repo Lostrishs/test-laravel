@@ -6,7 +6,11 @@ RUN sed -i -e "s+/var/www/html+$APACHE_DOCUMENT_ROOT+g" /etc/apache2/sites-avail
     && sed -i -e "s+/var/www/+${APACHE_DOCUMENT_ROOT}/+g" /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
     && apt update \
     && apt-get install -y --no-install-recommends \
-     git
+     git \
+    && apt -y autoremove && apt autoclean && rm -rf /var/lib/apt/lists/* \
+    && docker-php-ext-install pdo_mysql \
+    && docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
+    && a2enmod headers rewrite
 
 WORKDIR /var/www/html
 COPY . /var/www/html
